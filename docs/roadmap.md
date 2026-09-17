@@ -8,7 +8,11 @@ fanout declarations; acceptance contracts; baseline/final check execution; bound
 output receipts; source freshness; and evidence reports. All tooling works offline
 except whatever network access a project's configured checks explicitly use.
 
-## Next: demonstrate host behavior
+## Next: broaden host evaluation
+
+A [three-turn live Codex evaluation](validation.md) now covers activation, a sticky
+follow-up and opt-out in one small fixture. It establishes an initial observed
+case, not a cross-host reliability result.
 
 Build a small public evaluation suite of genuine tasks for each host. Include a
 multi-turn bug fix, lightweight edit, performance hypothesis, shipping with and

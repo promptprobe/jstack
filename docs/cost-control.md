@@ -5,6 +5,11 @@ evidence. Fewer tokens can be a false economy if an untested patch creates a lat
 incident. jstack constrains optional exploration and coordination while preserving
 the checks required by the task and project.
 
+The host's existing model, reasoning effort and other installed plugins still
+contribute to usage under every budget. For example, `cheap` does not lower a
+host configured for maximum reasoning. Its label describes workflow allowances,
+not a demonstrated low-price execution mode.
+
 ## Hard checks versus agent guidance
 
 | Policy | Implemented by |

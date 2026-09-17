@@ -1,0 +1,37 @@
+{
+  "observed_date": "2026-09-16",
+  "timezone": "America/Los_Angeles",
+  "jstack_runtime_commit": "5a33920c17afe0dc4f809540f24c1101bffc321a",
+  "host": "Codex CLI",
+  "host_version": "0.154.0",
+  "model": "gpt-6-astra",
+  "host_reasoning_effort": "max",
+  "budget": "cheap",
+  "scenario_count": 3,
+  "results": {
+    "explicit_activation_and_bug_fix": "passed",
+    "failing_baseline_before_fix": "passed",
+    "followup_without_skill_invocation": "passed",
+    "same_session_and_budget": "passed",
+    "opt_out_before_plain_edit": "passed",
+    "no_new_contract_after_opt_out": "passed",
+    "original_tests_preserved": "passed",
+    "independent_cart_combinations_passed": 75
+  },
+  "fixture_tests_after_first_turn": 5,
+  "fixture_tests_after_followup": 6,
+  "planned_child_agents": 0,
+  "limits": [
+    "One small fixture and one model configuration, not a reliability benchmark",
+    "No forced compaction or cross-chat recovery test",
+    "No live Claude Code execution; CLI unavailable",
+    "No token savings or dollar-cost comparison",
+    "cheap preserves the host model and reasoning effort"
+  ],
+  "environment_notes": [
+    "Codex CLI 0.149.1 rejected the configured model before jstack ran",
+    "Official 0.154.0 CLI and matching code-mode host were used from an isolated work directory",
+    "Existing global installation and configuration were not modified"
+  ],
+  "evidence_provenance": "Observed from CLI events, task/run/session records, and an independent post-run check; not a signed attestation"
+}
