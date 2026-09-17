@@ -1,0 +1,4 @@
+interface:
+  display_name: "jstack mode"
+  short_description: "Cost-aware coding with checkable evidence"
+  default_prompt: "Use $jstack-mode with a normal budget to complete this task and verify the result."

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "budget": "cheap",
+  "agents": { "enabled": false, "max_children": 0 },
+  "verification": {
+    "timeout_seconds": 120,
+    "checks": [
+      {
+        "name": "node tests",
+        "argv": ["node", "--test"],
+        "required": true
+      }
+    ]
+  }
+}

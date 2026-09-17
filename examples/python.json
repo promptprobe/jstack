@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "budget": "normal",
+  "agents": { "enabled": false, "max_children": 1 },
+  "verification": {
+    "timeout_seconds": 120,
+    "checks": [
+      {
+        "name": "unit tests",
+        "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests"],
+        "required": true
+      }
+    ]
+  }
+}
