@@ -236,7 +236,7 @@ python3 scripts/validate.py
 
 ## 영감과 라이선스
 
-Lauren Tan([poteto](https://github.com/poteto))의 [pstack](https://github.com/cursor/plugins/tree/main/pstack)에서 대화에 유지되는 엔지니어링 모드, 작업별 플레이북, 근거 중심의 검증이라는 개념에 영감을 받았습니다.
+제가 좋아하는.. Lauren Tan([poteto](https://github.com/poteto))의 [pstack](https://github.com/cursor/plugins/tree/main/pstack)에서 대화에 유지되는 엔지니어링 모드, 작업별 플레이북, 근거 중심의 검증이라는 개념에 영감을 받았습니다.
 
 jstack의 코드, 프롬프트, 구조, 작업 강도 정책과 문서는 이 프로젝트를 위해 독립적으로 작성했습니다. pstack의 포크나 공식 연동 프로젝트는 아닙니다. pstack에도 추론 예산 설정이 있으므로 예산 선택을 jstack만의 발명이라고 주장하지 않으며, 비용이 더 적게 든다는 비교 결과도 아직 없습니다. [설계 출처](docs/provenance.md)
 
