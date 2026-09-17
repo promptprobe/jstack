@@ -10,7 +10,10 @@ contribute to usage under every budget. For example, `cheap` does not lower a
 host configured for maximum reasoning. Its label describes workflow allowances,
 not a demonstrated low-price execution mode.
 
-## Hard checks versus agent guidance
+## Skill-only versus recorded enforcement
+
+In skill-only operation, all budgets are agent instructions. The following hard
+checks apply only when the optional runner is explicitly used.
 
 | Policy | Implemented by |
 | --- | --- |

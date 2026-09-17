@@ -24,13 +24,15 @@ def instruction(host):
     invocation = "$jstack-mode" if host == "codex" else "/jstack-mode"
     return block(f"""## jstack
 Use the project jstack skill when the user invokes `{invocation}` or asks for jstack.
-Once activated, keep its session ID and budget in this conversation until the user
-turns it off. Reuse that ID on later turns; never adopt another session from disk.
-After lost context, ask for the ID or start fresh on explicit invocation.
+Once activated, keep its active state and budget in this conversation until the
+user turns it off. Default to skill-only operation, even with the helper installed.
+Recorded sessions are opt-in; never adopt another session from disk.
+After lost context, explain the gap and restart on explicit invocation.
 Read `.jstack/config.json` and the installed jstack-mode skill when activated.
 Respect existing project instructions and the user's scope. Merely installing
 jstack does not activate it, authorize publication, or permit extra agents.
-Run the local helper with `python3 .jstack/jstack.py` from the project root.
+For explicitly requested recorded operation, read the skill's references/runner.md
+and run `python3 .jstack/jstack.py` from the project root.
 """)
 
 

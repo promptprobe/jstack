@@ -2,6 +2,33 @@
 
 [한국어 검증 기록](validation.ko.md)
 
+## 0.2.0 standalone skill evaluation
+
+On 2026-09-16, only the built skill ZIP was extracted into a fresh fixture's
+`.agents/skills/`. No setup command, `.jstack/`, config, AGENTS.md or CLAUDE.md
+was present. Codex CLI 0.154.0 with the configured gpt-6-astra/max completed three
+real turns: bug fix (4 tests), follow-up without reinvocation (5 tests, cheap
+retained), and opt-out plus a README edit. Both fixes had observed failures before
+implementation. No jstack runtime was invoked or created. Independent checks
+preserved the original tests and passed 75 behavior combinations. Skill files
+remained byte-identical to the archive. Confidence: high for this observed case.
+
+The 37 deterministic tests include archive closure, repeated-build consistency,
+checksum verification, extraction to both host layouts, and rejection of broken
+references or unexpected artifacts. The optional installed-runner smoke flow and
+Skill Creator validator also passed locally. Remote CI is a separate result.
+
+The system python3 failed due to missing developer tools; the agent used an
+existing working Python to test the application. This does not create a Python
+dependency for the skill itself. Live Claude Code, personal-scope invocation,
+forced compaction and cost comparisons remain untested. See the
+[Korean walkthrough](validation-skill-only.ko.md) and
+[structured evidence](evaluations/skill-only-2026-09-16.json).
+
+## Historical 0.1.0 evaluation
+
+The following used the optional runner, which was the default in 0.1.0.
+
 ## Follow-up live Codex evaluation
 
 On 2026-09-16 (America/Los_Angeles), three real model turns were executed in an

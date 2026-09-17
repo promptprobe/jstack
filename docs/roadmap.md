@@ -1,11 +1,12 @@
 # Roadmap
 
-## 0.1 — Available now
+## 0.2 — Available now
 
-Project-local Codex and Claude Code adapters; one sticky entry skill; eight focused
-playbooks; cheap/normal/deep effort; explicit session IDs; strict config; justified
-fanout declarations; acceptance contracts; baseline/final check execution; bounded
-output receipts; source freshness; and evidence reports. All tooling works offline
+A standalone skill ZIP for personal or project use in Codex and Claude Code,
+with no jstack runtime or config prerequisite; one sticky entry skill; eight
+focused playbooks; cheap/normal/deep effort; and justified optional fanout.
+The optional runner adds project-local adapters, explicit session IDs, strict
+config, acceptance contracts, check execution, bounded receipts and source freshness. All tooling works offline
 except whatever network access a project's configured checks explicitly use.
 
 ## Next: broaden host evaluation

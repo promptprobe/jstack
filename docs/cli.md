@@ -1,5 +1,8 @@
 # CLI reference
 
+This reference describes the optional Python runner. The standalone skill does
+not require this setup; see [skill-only installation](installation.md#skill-only-download-copy-invoke).
+
 Run `python3 jstack.py COMMAND --help` from the checkout, or
 `python3 .jstack/jstack.py COMMAND --help` after installation. Every command accepts
 `--project PATH` after the command; the default is the current directory.

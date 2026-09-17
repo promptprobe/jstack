@@ -1,0 +1,55 @@
+{
+  "release": "0.2.0",
+  "date": "2026-09-16",
+  "timezone": "America/Los_Angeles",
+  "host": "Codex CLI",
+  "host_version": "0.154.0",
+  "model": "gpt-6-astra",
+  "reasoning": "max (existing host setting)",
+  "mode": "skill-only",
+  "budget": "cheap",
+  "archive_sha256": "ea7d1bce087f37da6a29d38fcd5f3780a777bd66ff1bc6fa7b6a7b7d5d0cc0fe",
+  "installation": "Only release ZIP extracted to .agents/skills; no setup, runtime, config or instruction-file anchor",
+  "real_turns": 3,
+  "observations": {
+    "failing_baselines_before_implementation": true,
+    "follow_up_without_reinvoking_skill": true,
+    "opt_out_and_readme_edit": true,
+    "runtime_or_config_created": false,
+    "original_tests_preserved": true,
+    "independent_behavior_combinations": 75,
+    "skill_files_unchanged": true,
+    "child_agents": 0
+  },
+  "limitations": [
+    "One small fixture, one host/model; not a reliability benchmark",
+    "No live Claude Code execution",
+    "No forced compaction or comparative cost experiment",
+    "System python3 could not run; agent used an existing working Python interpreter for project tests",
+    "Default skill budgets and sticky state rely on host adherence"
+  ],
+  "raw_turn_completed_usage_snapshots": {
+    "1": {
+      "input_tokens": 212205,
+      "cached_input_tokens": 186240,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 3172,
+      "reasoning_output_tokens": 1818
+    },
+    "2": {
+      "input_tokens": 351372,
+      "cached_input_tokens": 321536,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 5044,
+      "reasoning_output_tokens": 2952
+    },
+    "3": {
+      "input_tokens": 466513,
+      "cached_input_tokens": 433536,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 5366,
+      "reasoning_output_tokens": 3078
+    }
+  },
+  "usage_note": "Raw CLI event counters; resume aggregation semantics are not normalized. Do not sum these snapshots or treat them as per-turn billed tokens."
+}

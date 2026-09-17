@@ -1,16 +1,14 @@
 # Codex adapter
 
-Setup places this skill at `.agents/skills/jstack-mode/` and adds a small opt-in
-anchor to `AGENTS.md`. Invoke `$jstack-mode` in Codex CLI or the IDE extension;
-use the host's skill picker if its UI uses a different mention syntax.
+Invoke `$jstack-mode` or select it in the host's skill picker. The project path is
+`.agents/skills/jstack-mode/`; a personal copy can live at
+`~/.agents/skills/jstack-mode/`. The portable ZIP works without setup.
 
-Use `python3 .jstack/jstack.py mode on --host codex` from the project root.
-Use the tools actually available in this Codex environment for shell execution,
-editing and inspection. Do not assume a Cursor Task API, model alias, browser
-driver, or a particular thread environment variable. Keep the existing model and
-permissions. If native agent tools are unavailable or forbidden, work sequentially.
+Default to skill-only operation even if this adapter was installed by the optional
+runner. Retain the active flag and budget in conversation context. Do not create
+session files or require Python just to activate. Only read `references/runner.md`
+when the user explicitly requests recorded operation; then use `--host codex`.
 
-Retain the jstack session ID in the conversation and any compaction handoff.
-CLI records do not make the host remember an ID it has lost. Project instructions
-provide a reminder, not a background service. No hooks or global settings are
-installed. Existing AGENTS.md content remains authoritative within its scope.
+Use available Codex tools and preserve existing model, permissions and AGENTS.md
+instructions. No Cursor API, browser driver, agent tool or thread variable is
+assumed. Work sequentially when delegation is unavailable or disallowed.

@@ -1,5 +1,8 @@
 # Project configuration
 
+This reference describes the optional Python runner. The standalone skill does
+not require this setup; see [skill-only installation](installation.md#skill-only-download-copy-invoke).
+
 `.jstack/config.json` is strict JSON, with `version: 1`. Unknown keys and malformed
 values are rejected to expose misspellings. The [JSON Schema](../schemas/config.schema.json)
 supports editor validation. `jstack_core/config.py` is the runtime validator.

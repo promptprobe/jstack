@@ -1,58 +1,63 @@
 ---
 name: jstack-mode
-description: Run an opt-in jstack coding workflow with cheap, normal, or deep effort, an acceptance contract, and recorded verification. Use when the user asks for jstack or continues an active jstack session.
+description: Use jstack for cost-aware coding with cheap, normal, or deep effort and verification before completion. Apply when the user asks for jstack or continues an active jstack conversation; works without a separate runtime.
 ---
 
 # jstack-mode
 
-Keep engineering effort proportional to the decision. Start with one agent, one
-observable outcome, and the smallest useful check. Budget is an effort policy,
-not a dollar estimate or a substitute for correctness.
+Start with one agent, one observable outcome, and the smallest useful check.
+This folder is a complete skill. Default to **skill-only** operation: no jstack
+CLI, Python installation, Git setup, generated config, or session files required.
+Use the host's existing editing, execution and inspection tools. The project may
+still need its own language runtime and dependencies to run its tests.
 
 ## Activate once per conversation
 
-On first use, read [the host adapter](references/host.md) if installed, then
-`.jstack/config.json`. From the project root run:
+Read [host guidance](references/host.md) on first use. Remember in this conversation:
+`jstack active; skill-only; budget cheap|normal|deep; fanout off`.
+Use the requested budget, otherwise an existing `.jstack/config.json` budget if
+present, otherwise `normal`. Config is optional; do not create it or install
+anything just to activate. Existing config can also supply checks and agent
+preferences; current user and project instructions still control scope.
 
-```sh
-python3 .jstack/jstack.py mode on --host codex --budget normal
-```
+Briefly acknowledge the budget and proceed with the user's task. Later coding
+turns reuse this state without another invocation. `jstack budget cheap` changes
+the remembered budget; `jstack off` stops the mode without a command or disk write.
+Ordinary conversation does not need a task contract. Keep state, current outcome
+and unresolved evidence in any compaction handoff. If context is lost, say so and
+restart on invocation; never infer activation from another conversation's files.
+Sticky behavior depends on host adherence, not guaranteed cross-chat memory.
 
-Use `--host claude` for Claude Code. Use the user's budget when specified;
-otherwise omit `--budget` to read the project default. Retain the returned session
-ID in this conversation. On later coding turns, reuse that ID and the selected
-budget without making the user invoke the skill again. Ordinary conversation does
-not need a task contract. User instructions continue to control scope.
+**Recorded operation is opt-in.** Only when the user requests jstack's local
+receipts, or explicitly continues a recorded session, read
+[the optional runner](references/runner.md). Having `.jstack/` on disk alone does
+not require using it. If requested recording is unavailable, disclose that gap;
+continue authorized work in skill-only mode without claiming a receipt exists.
 
-`jstack off` means run `mode off --session ID` and stop applying this workflow.
-For a budget change, run `mode on --session ID --budget cheap|normal|deep`.
-Never search disk for an arbitrary active session. After compaction, carry the ID,
-budget, current task ID and unresolved evidence in the handoff. If those are lost,
-explain the gap and start a new session on invocation; do not promise automatic
-cross-chat memory. Sticky behavior depends on the host following these instructions.
+## Route and choose evidence before editing
 
-## Route and define evidence before editing
+Choose from intent and read only the relevant playbook:
+[feature](references/playbooks/feature.md),
+[bug-fix](references/playbooks/bug-fix.md),
+[refactor](references/playbooks/refactor.md),
+[perf](references/playbooks/perf.md),
+[prototype](references/playbooks/prototype.md),
+[verification](references/playbooks/verification.md),
+[shipping](references/playbooks/shipping.md), or
+[lightweight](references/playbooks/lightweight.md).
 
-Read only the selected playbook: [feature](references/playbooks/feature.md),
-[bug-fix](references/playbooks/bug-fix.md), [refactor](references/playbooks/refactor.md),
-[perf](references/playbooks/perf.md), [prototype](references/playbooks/prototype.md),
-[verification](references/playbooks/verification.md), [shipping](references/playbooks/shipping.md),
-or [lightweight](references/playbooks/lightweight.md).
+State a short acceptance contract **in the conversation**: intended result,
+scope and how it will be checked. A small edit needs only a sentence. Discover
+real checks from project instructions, manifests, test files or existing config;
+inspect commands and referenced scripts before running them. Do not invent a test
+command, create ceremonial plan files, or add tests that just mirror a text edit.
+Configured `{python}` placeholders need an available interpreter, not a guessed
+path; if none exists, report that check as unavailable.
 
-Choose from task intent. The CLI's keyword router is a hint and can be wrong,
-particularly with negation or several goals. Use `--playbook` to correct it.
-Split genuinely distinct goals into separate task contracts.
-
-```sh
-python3 .jstack/jstack.py plan 'Fix duplicate cart additions' --session ID \
-  --playbook bug-fix --accept 'One click adds exactly one item after reconnect'
-```
-
-Before creating the contract, inspect configured checks and make them relevant to
-the outcome. Checks are executable project code; read their argv and referenced
-scripts before running them. Configure them only within existing authorization.
-The default checks list is empty on purpose. If configuration changes after a
-plan, create a new contract instead of silently weakening the old one.
+For a meaningful baseline, reproduce the bug or measure current behavior before
+the fix. Then make the scoped change and run relevant checks using native host
+tools. If checks are missing or unavailable, inspect what can be observed and
+state the verification gap. Absence of a test suite is not a passing test.
 
 ## Spend deliberately
 
@@ -62,42 +67,32 @@ plan, create a new contract instead of silently weakening the old one.
 | normal | 2 | 2 | 1 | 10 |
 | deep | 4 | 3 | 3 | 20 |
 
-These are ceilings, not quotas. File counts and investigation passes are guidance;
-the local runner enforces final verification attempts per task. Do not recreate
-task IDs just to bypass an exhausted allowance. Preserve the failed evidence,
-explain what was learned, and let the user choose a new scope or budget. Do not
-upgrade effort or switch paid models silently. Keep the host's current model.
-Required checks remain required at every budget. Read narrow source slices; do
-not load every playbook or reread unchanged files after each turn.
+These are ceilings, not quotas. In skill-only mode they are instructions, not
+mechanically enforced counters or token/dollar caps. At the limit, preserve failed
+evidence and propose a smaller scope or a specific next experiment; do not silently
+raise the budget or relabel the task to evade it. Keep the host's selected model
+and reasoning settings. Required checks remain required at every budget.
+Read narrow source slices; do not load all playbooks or reread unchanged files.
 
-Fanout is off unless project config enables it, the host and current instructions
-permit it, and independent work will save more time than coordination costs.
-Read [fanout](references/fanout.md) only at that decision. Sequential work is the
-fallback. A deep budget never creates an obligation to spawn agents.
+Fanout is off by default. Consider it only if the user or existing project config
+explicitly enables it, the host and current instructions permit it, and independent
+work justifies its coordination cost. Then read [fanout](references/fanout.md).
+A deep budget alone does not enable agents. Work sequentially otherwise.
 
-## Verify, then report what the evidence establishes
+## Report what the evidence establishes
 
-For a meaningful baseline, run `verify --task TASK_ID --phase baseline` before
-implementation. A failing baseline is useful evidence. After implementation run:
+Read actual output. A zero exit code proves only what the command tests. Exercise
+relevant behavior when available: a UI flow, saved artifact, API response or
+before/after measurement. After a material source or input change, rerun affected
+checks within budget; do not present older results as current.
 
-```sh
-python3 .jstack/jstack.py verify --task TASK_ID
-python3 .jstack/jstack.py report --task TASK_ID
-```
+Report the outcome, exact check or observation, failures and omissions, and
+remaining limits. Label major claims high, moderate, low or unknown. Keep source
+inspection, local tests, CI, remote commits and live deployment separate.
+Read [evidence](references/evidence.md) when the distinction is unclear. Skill-only
+mode reports evidence in the conversation; never invent session IDs, receipts,
+fingerprints, saved reports or automatic freshness detection.
 
-Read the actual check output. A zero exit code establishes only what that command
-tests. Inspect relevant behavior: a UI flow, a saved artifact, a API response, or a
-before/after measurement. Record extra observations with `evidence --task TASK_ID
---kind runtime|source|ci|deployment|inference --claim TEXT --source PATH_OR_URL
---confidence high|moderate|low|unknown`. This records a supplied claim, not an
-automatic independent verification. Never label an inference as observed.
-
-Read [evidence](references/evidence.md) when a result is ambiguous. Report the
-outcome, source of proof, check failures or omissions, and remaining limits. Keep
-local checks, CI, remote commits, and live deployment separate. Use high, moderate,
-low, or unknown for major claims. If source changed after verification, recheck the
-affected behavior within budget. Never say “done” just because a command ran.
-
-Shipping actions require the user's task authorization. Reuse authorization
-already given; prepare the concrete result before asking about a missing decision.
-Do not turn a request to implement into permission to publish, merge or deploy.
+Shipping needs the user's task authorization; reuse authorization already given.
+An instruction to implement does not itself authorize publishing, merging or
+deploying. Report missing access as a boundary, not a successful action.

@@ -6,13 +6,13 @@
 
 [![검증](https://github.com/promptprobe/jstack/actions/workflows/validate.yml/badge.svg)](https://github.com/promptprobe/jstack/actions/workflows/validate.yml)
 [![MIT 라이선스](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python 3.10 이상](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![스킬 다운로드](https://img.shields.io/badge/skill-ZIP_download-green.svg)](https://github.com/promptprobe/jstack/releases/download/v0.2.0/jstack-mode.zip)
 
-jstack은 **Codex와 Claude Code에서 사용하는 AI 코딩 워크플로 도구**입니다. 대화에서 한 번 활성화한 뒤 원하는 결과와 작업 강도를 정하면, 에이전트가 작업에 맞는 절차를 따릅니다. 함께 설치되는 로컬 도구는 완료 기준을 기록하고, 검증 명령을 실행하고, 확인된 사실과 아직 모르는 부분을 구분해 보여줍니다.
+jstack은 **Codex와 Claude Code에 폴더만 넣으면 바로 사용하는 AI 코딩 스킬**입니다. 대화에서 한 번 활성화하고 원하는 결과와 작업 강도를 정하면, 작업에 맞는 플레이북으로 진행하고 실제 확인한 근거를 보고합니다.
 
-진입 스킬 하나, 작업별 플레이북 여덟 개로 구성됩니다. Python 외부 패키지가 필요 없고, 로컬 도구 자체는 모델 API를 호출하거나 사용 정보를 전송하지 않습니다. Codex·Claude Code에서 에이전트를 실행할 때의 모델 사용량은 별도로 발생합니다.
+**기본 사용에는 Python, Git clone, 설치 명령, 설정 파일이 필요 없습니다.** 진입 스킬 하나와 작업별 플레이북 여덟 개가 ZIP 안에 들어 있습니다. 작업 대상 프로젝트 자체의 테스트에 필요한 실행 환경은 별개입니다. 호스트에서 에이전트를 실행할 때 모델 사용량은 발생합니다.
 
-현재 **0.1.0 초기 버전**입니다. Codex에서 버그 수정·후속 요청의 모드 유지·모드 해제를 실제 3턴으로 확인했습니다. 도구 테스트와 실사용 시험의 범위 및 한계는 [검증 기록](docs/validation.ko.md)에 구분해 적었습니다.
+현재 **0.2.0 초기 버전**입니다. 스킬 단독 사용이 기본이며, 검증 기록 저장·재시도 제한·소스 변경 감지가 필요할 때만 별도 Python 도구를 선택합니다. 실제 확인한 범위와 한계는 [검증 기록](docs/validation.ko.md)에 구분합니다.
 
 ```text
 사용자: $jstack-mode cheap
@@ -33,70 +33,46 @@ Claude Code에서는 `$jstack-mode` 대신 **`/jstack-mode`**를 사용합니다
 
 <a id="install-in-a-project"></a>
 
-## 설치
+## 스킬 ZIP 받아 바로 시작하기
 
-**Python 3.10 이상**, **Git**, 프로젝트 스킬을 지원하는 Codex 또는 Claude Code가 필요합니다. 적용할 Git 저장소의 최상위 폴더에서 설치하세요.
+1. **[jstack-mode.zip 다운로드](https://github.com/promptprobe/jstack/releases/download/v0.2.0/jstack-mode.zip)** 후 압축을 풉니다.
+2. 안에 있는 **`jstack-mode` 폴더 전체**를 아래 위치 중 하나에 넣습니다. `SKILL.md`만 따로 옮기지 마세요.
+3. Codex 또는 Claude Code에서 스킬을 호출합니다. 목록에 안 보이면 호스트를 새로고침하거나 재시작하세요.
 
-```sh
-git clone https://github.com/promptprobe/jstack.git "$HOME/.local/share/jstack"
-cd /path/to/your/project
-
-# 어떤 파일을 설치·수정하는지 먼저 확인
-python3 "$HOME/.local/share/jstack/jstack.py" setup --host both --dry-run
-
-# Codex와 Claude Code에 함께 설치
-python3 "$HOME/.local/share/jstack/jstack.py" setup --host both
-```
-
-| 사용할 도구 | 설치 옵션 | 스킬 설치 위치 | 대화에서 호출 |
+| 도구 | 모든 프로젝트에서 사용 — 개인 설치 | 이 프로젝트만 — 프로젝트 설치 | 호출 |
 | --- | --- | --- | --- |
-| Codex CLI / IDE | `--host codex` | `.agents/skills/jstack-mode/` | `$jstack-mode` |
-| Claude Code | `--host claude` | `.claude/skills/jstack-mode/` | `/jstack-mode` |
-| 둘 다 | `--host both` | 위 두 위치 | 각 도구의 호출 방식 사용 |
+| Codex | `~/.agents/skills/jstack-mode/` | `.agents/skills/jstack-mode/` | `$jstack-mode cheap` |
+| Claude Code | `~/.claude/skills/jstack-mode/` | `.claude/skills/jstack-mode/` | `/jstack-mode cheap` |
 
-설치 도구는 다음을 처리합니다.
+개인 설치와 프로젝트 설치 중 하나를 선택하세요. 둘 다 쓰면 같은 ZIP의 폴더를 각 호스트 위치에 복사하면 됩니다. `~`는 사용자 홈 폴더입니다. 폴더가 없으면 만들고, 최종 경로가 `.../skills/jstack-mode/SKILL.md`인지 확인하세요. 기존 동명의 스킬이 있다면 사용자 수정본을 백업한 뒤 교체하세요.
 
-- `.jstack/`에 실행 도구와 프로젝트 설정을 복사합니다.
-- 필요한 `AGENTS.md`, `CLAUDE.md`, `.gitignore`에 jstack 전용 구역을 추가합니다.
-- 기존 지침과 설정을 보존합니다. 사용자가 수정한 관리 대상 파일은 임의로 덮어쓰지 않습니다.
+```text
+# Codex 대화
+$jstack-mode normal
+이 프로젝트의 로그인 오류를 재현하고 수정한 뒤 검증해줘.
 
-설치만으로 모드가 켜지거나 전역 설정이 바뀌지는 않습니다. 스킬이 목록에 나타나지 않으면 호스트를 새로고침하거나 재시작하세요. 전역 명령을 설치하지 않으므로 Java에 포함된 별개의 `jstack` 명령과도 충돌하지 않습니다.
-
-팀과 공유하려면 설치된 스킬, 실행 도구, 설정, 설치 명세와 프로젝트 지침을 커밋하세요. 작업 내용과 명령 출력이 저장되는 **`.jstack/local/`은 Git에서 제외**해야 합니다. [설치·업데이트·삭제 안내](docs/installation.md)
-
-### 프로젝트에 맞는 검증 명령 설정
-
-기본 설정에는 검증 명령이 없습니다. 프로젝트마다 실행 방법이 다르므로 임의의 테스트 명령을 가정하지 않습니다. **검증 항목이 비어 있으면 통과로 처리하지 않습니다.**
-
-Python 프로젝트라면 `.jstack/config.json`을 다음처럼 설정할 수 있습니다.
-
-```json
-{
-  "version": 1,
-  "budget": "normal",
-  "agents": { "enabled": false, "max_children": 1 },
-  "verification": {
-    "timeout_seconds": 120,
-    "checks": [
-      {
-        "name": "tests",
-        "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests"],
-        "required": true
-      }
-    ]
-  }
-}
+# Claude Code 대화
+/jstack-mode normal
+이 프로젝트의 로그인 오류를 재현하고 수정한 뒤 검증해줘.
 ```
 
-실제로 해당 프로젝트를 검증하는 명령으로 바꿔주세요. [Python·Node 설정 예시](examples)도 제공됩니다.
+**여기까지면 기본 사용 준비가 끝납니다.** `setup`이나 `doctor`를 실행할 필요가 없습니다. 스킬은 프로젝트 지침·테스트 파일·실행 명령을 살펴 적절한 검증을 선택합니다. 검증할 수 없는 환경이면 확인하지 못한 부분을 보고하며, 자동으로 통과 처리하지 않습니다.
 
-명령은 문자열 배열인 `argv`로 지정하며, 프로젝트 최상위 폴더에서 실행됩니다. 셸 치환은 자동으로 수행하지 않습니다. `{python}`은 jstack을 실행 중인 Python 경로로 바뀝니다. Windows에서는 `.cmd` 래퍼에 의존하기보다 실행 파일이나 스크립트의 인터프리터를 명시하는 방식을 권장합니다.
+스킬 복사만으로 `AGENTS.md`, `CLAUDE.md`, `.gitignore` 또는 `.jstack/`를 만들거나 변경하지 않습니다. 설치 자체가 모드를 켜지도 않습니다. 같은 대화에서는 유지하고 새 대화에서 다시 호출합니다. 설치 위치는 [OpenAI 공식 안내](https://learn.chatgpt.com/docs/build-skills)와 [Claude Code 공식 안내](https://code.claude.com/docs/en/skills)를 따릅니다.
 
-```sh
-python3 .jstack/jstack.py doctor
-```
+[스킬 원본 폴더](skills/jstack-mode) · [ZIP 체크섬](https://github.com/promptprobe/jstack/releases/download/v0.2.0/SHA256SUMS) · [설치·업데이트·삭제 안내](docs/installation.md)
 
-`doctor`는 설치 파일과 설정을 점검합니다. 모델을 호출하거나 호스트의 스킬 인식까지 증명하는 명령은 아닙니다. 검증 명령은 프로젝트 코드를 실제로 실행하므로, 처음 보는 저장소에서는 설정과 실행할 스크립트를 먼저 확인하세요. [설정 상세](docs/configuration.md)
+### 선택 기능: 검증 기록을 파일로 남기기
+
+| 기능 | 스킬만 사용 — 기본 | 선택형 로컬 도구 |
+| --- | --- | --- |
+| 작업 분류·예산·대화 모드 유지 | 지원, 에이전트 지침으로 동작 | 지원 |
+| 프로젝트 테스트 실행·결과 설명 | 호스트 도구로 실행 | 검사 명령과 결과를 파일로 기록 |
+| 설정 파일·세션 ID | 필수 아님 | 필요 |
+| 재시도 제한·검증 후 소스 변경 감지 | 에이전트가 판단, 강제하지 않음 | 작업별 제한·Git 소스 식별값 비교 |
+| 추가 실행 환경 | jstack 자체는 없음 | Python 3.10+ 및 Git |
+
+기존 `.jstack/config.json`이 있으면 작업 강도·검증 명령 등에 참고할 수 있지만 기본 사용에는 필요 없습니다. 자동 기록을 원할 때만 [선택형 도구 설치](docs/installation.md#optional-recorded-operation)와 [설정 안내](docs/configuration.md)를 따르세요. 도구 설치 후에도 기본은 스킬 단독 모드입니다. 에이전트에게 **“jstack 로컬 기록 모드로 진행해줘”**라고 요청하면 기록 도구를 사용합니다.
 
 ## 작업 강도: cheap · normal · deep
 
@@ -108,9 +84,9 @@ python3 .jstack/jstack.py doctor
 
 ¹ 에이전트에게 주는 지침입니다. 호스트의 도구 호출을 기술적으로 제한하지는 않습니다.
 
-² 로컬 검증 도구는 작업별로 최초 최종 검증 1회와 해당 횟수만큼의 재시도를 허용합니다.
+² 스킬 단독 모드에서는 지침입니다. 선택형 로컬 도구를 사용할 때만 작업별로 최초 최종 검증 1회와 해당 횟수만큼의 재시도를 강제합니다.
 
-³ 프로젝트 설정의 상한도 함께 적용됩니다. 병렬 에이전트 사용은 **기본적으로 꺼져 있습니다.**
+³ 설정에 상한이 있으면 더 낮은 값을 따릅니다. 병렬 에이전트는 **기본적으로 꺼져 있으며**, 사용자 또는 기존 설정의 명시적 활성화와 호스트 권한이 필요합니다.
 
 표의 숫자는 채워야 할 할당량이 아니라 상한입니다. `cheap`에서는 탐색과 조율을 줄이되 필수 검증을 생략하지 않습니다. `deep`에서는 더 깊이 조사할 수 있지만, 여러 에이전트를 반드시 띄우지는 않습니다. 현재 호스트의 모델을 유지하며 작업 강도나 유료 모델을 자동으로 올리지 않습니다.
 
@@ -129,7 +105,7 @@ python3 .jstack/jstack.py doctor
 | `shipping` | 승인된 공개·배포 작업 | 원격 커밋, CI, 실제 배포 상태를 각각 확인 |
 | `lightweight` | 문구·간격 등 작은 수정 | 수정된 결과 확인 또는 관련 기존 검사 |
 
-해당 작업의 플레이북만 읽도록 설계했습니다. CLI의 자동 분류는 간단한 한국어·영어 키워드 방식이라 문맥을 오해할 수 있습니다. 에이전트는 작업 의도를 판단하고 필요하면 `--playbook`으로 바로잡아야 합니다. 플레이북 선택만으로 공개·배포 명령이 실행되지는 않습니다.
+해당 작업의 플레이북만 읽도록 설계했습니다. 선택형 CLI의 자동 분류는 간단한 한국어·영어 키워드 방식이라 문맥을 오해할 수 있습니다. 에이전트는 작업 의도를 판단하고 필요하면 `--playbook`으로 바로잡아야 합니다. 플레이북 선택만으로 공개·배포 명령이 실행되지는 않습니다.
 
 Codex 사용 예시입니다. Claude Code에서는 `$`를 `/`로 바꿔 사용하세요.
 
@@ -152,17 +128,17 @@ $jstack-mode normal
 
 ### 한 번 켜면 언제까지 유지되나요?
 
-**같은 대화 안에서 유지하도록 설계했습니다.** 활성화할 때 생성된 세션 ID와 작업 강도를 에이전트가 다음 요청에도 이어 사용합니다. 대화별 기록은 분리되므로 다른 대화의 모드가 자동으로 켜지지 않습니다.
+**같은 대화 안에서 유지하도록 설계했습니다.** 기본 모드에서는 활성 상태와 작업 강도를 대화 문맥에 기억합니다. 세션 ID나 디스크 기록을 만들지 않습니다.
 
 - `jstack off`: 현재 대화의 모드 해제
-- `jstack budget cheap`: 현재 세션의 작업 강도 변경
-- CLI의 작업별 `--budget`: 해당 작업에만 적용하며 세션 기본값은 유지
+- `jstack budget cheap`: 현재 대화의 작업 강도 변경
+- 새 대화: 스킬을 다시 호출
 
-상시 실행되는 서비스나 전역 활성 세션은 없습니다. 대화가 요약되거나 문맥이 사라질 때 세션 ID를 유지하는지는 호스트의 동작에 달려 있습니다. ID를 잃으면 스킬을 다시 호출하거나 기존 ID를 알려줘야 합니다. 따라서 sticky 모드는 **대화 지침과 세션 기록의 조합이며, 호스트 차원의 영구 기억 보장은 아닙니다.**
+상시 실행 서비스나 전역 활성 상태는 없습니다. 대화가 요약되거나 문맥이 사라질 때 상태를 유지하는지는 호스트의 동작에 달려 있습니다. 문맥을 잃으면 스킬을 다시 호출하세요. **호스트 차원의 영구 기억을 보장하지 않습니다.** 선택형 기록 모드에서만 세션 ID가 생기며, 그 ID도 호스트가 기억해야 후속 작업에 이어 쓸 수 있습니다.
 
-## 에이전트 없이 직접 실행하기
+## 선택형 로컬 도구 직접 실행하기
 
-로컬 도구의 기능은 명령으로도 사용할 수 있습니다.
+별도로 설치·설정한 로컬 도구는 다음처럼 직접 사용할 수 있습니다. 스킬 단독 사용자에게는 필요 없는 단계입니다.
 
 ```sh
 python3 .jstack/jstack.py mode on --host codex --budget cheap
@@ -191,15 +167,12 @@ python3 .jstack/jstack.py report --task TASK_ID --format json
 
 ```mermaid
 flowchart LR
-  A[Codex 스킬] --> C[공통 작업 규칙]
-  B[Claude Code 스킬] --> C
-  C --> D[선택한 플레이북]
-  C --> E[프로젝트 설정과 작업 강도]
-  D --> F[호스트가 수정하고 확인]
-  E --> G[로컬 Python 도구]
-  F --> G
-  G --> H[소스와 연결된 검증 기록]
-  H --> I[근거 보고서]
+  A[스킬 ZIP] --> B[Codex 또는 Claude Code]
+  B --> C[필요한 플레이북만 읽기]
+  C --> D[호스트가 수정하고 검증]
+  D --> E[대화에서 근거 보고]
+  D -. 기록 모드 선택 시 .-> F[로컬 Python 도구]
+  F --> G[검증 기록과 소스 변경 감지]
 ```
 
 ```text
@@ -208,11 +181,11 @@ adapters/                Codex·Claude Code별 안내
 jstack_core/             설정, 설치, 작업 분류, 세션, 검증, 보고
 jstack.py                실행 진입점
 tests/                   설치·상태·검증 관련 회귀 테스트
-scripts/                 자동 검증과 격리된 전체 흐름 테스트
+scripts/                 스킬 ZIP 빌드·검증·전체 흐름 테스트
 docs/                    설치, 구조, 비용 원칙, 상세 문서
 ```
 
-호스트는 판단·코드 수정·필요한 에이전트 실행을 담당합니다. 로컬 도구는 작업 규칙과 검증 기록을 담당하며, 직접 모델을 호출하거나 배포·커밋·푸시하지 않습니다. pstack이나 Cursor에 대한 실행 의존성도 없습니다. [구조와 검증 범위](docs/architecture.md)
+호스트는 판단·코드 수정·필요한 에이전트 실행을 담당합니다. 선택형 로컬 도구는 기록 모드의 작업 규칙과 검증 기록을 담당하며, 직접 모델을 호출하거나 배포·커밋·푸시하지 않습니다. pstack이나 Cursor에 대한 실행 의존성도 없습니다. [구조와 검증 범위](docs/architecture.md)
 
 ## 테스트와 기여
 
@@ -220,7 +193,7 @@ docs/                    설치, 구조, 비용 원칙, 상세 문서
 python3 scripts/validate.py
 ```
 
-단위·통합 테스트, 설치된 CLI의 전체 흐름, Python 문법, 스킬 구조, 문서 내부 링크를 확인합니다. CI는 Linux·macOS·Windows와 여러 Python 버전을 대상으로 실행합니다. **CI 통과는 도구 테스트의 근거이며, 모든 호스트에서의 모델 행동이나 토큰 절감까지 증명하지는 않습니다.**
+단위·통합 테스트, 설치된 CLI의 전체 흐름, Python 문법, 독립 스킬 ZIP과 두 호스트 복사 경로, 문서 내부 링크를 확인합니다. CI는 Linux·macOS·Windows와 여러 Python 버전을 대상으로 실행합니다. **CI 통과는 도구 테스트의 근거이며, 모든 호스트에서의 모델 행동이나 토큰 절감까지 증명하지는 않습니다.**
 
 실제로 확인한 환경과 결과는 [한국어 검증 기록](docs/validation.ko.md)을 참고하세요. 기여 방법과 실제 호스트 평가 시나리오는 [기여 안내](CONTRIBUTING.md), 보안 관련 제보 방법은 [보안 안내](SECURITY.md)에 있습니다. 그 밖의 상세 기술 문서는 현재 영문으로 제공됩니다.
 
@@ -229,7 +202,7 @@ python3 scripts/validate.py
 - **실제 호스트 평가:** 버그 수정, 후속 요청, 모드 해제, 대화 요약 후 복구를 반복 검증합니다. 설치 테스트와 실제 모델의 지침 준수 여부는 구분합니다.
 - **실제 비용 측정:** 사용자가 선택한 경우 호스트 사용량을 가져와 비용과 결과 품질을 함께 비교합니다. 청구액을 확실히 제한하려면 호스트 지원이 필요합니다.
 - **검증 범위 확장:** 현재 식별값은 무시된 파일, 외부 서비스, 환경 변화까지 포괄하지 않습니다. 선택한 외부 입력, CI 결과, 브라우저 산출물을 연결하고 서브모듈 지원도 추가할 예정입니다.
-- **배포 편의:** 프로젝트 단위 설치가 안정화되면 호스트별 플러그인 패키징과 서명된 체크섬을 검토합니다. npm·PyPI 패키지는 아직 배포하지 않았습니다.
+- **배포 편의:** 독립 스킬 ZIP과 SHA-256 체크섬을 제공합니다. 이후 호스트별 플러그인 패키징과 서명된 체크섬을 검토합니다. npm·PyPI 패키지는 아직 배포하지 않았습니다.
 - **작업 분류 개선:** 문맥이 모호하거나 여러 언어가 섞인 사례로 분류 품질을 평가합니다. 사용자의 명시적 선택을 유지하고, 단순 분류만을 위해 모델 호출을 추가하지 않습니다.
 
 구체적인 완료 기준은 [로드맵](docs/roadmap.md)에 정리했습니다.

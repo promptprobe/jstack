@@ -25,13 +25,14 @@ identify any third-party code and license before adding it.
 
 ## Manual host evaluation scenarios
 
-Install into a disposable repository and actually exercise each target host:
+Extract the built ZIP into a disposable project and exercise each target host.
+Test skill-only mode with no runtime or config; evaluate recorded mode separately:
 
 1. Invoke jstack cheap, complete a small bug fix, then request a follow-up without
-   mentioning jstack. Check session/budget continuity and evidence.
-2. Turn the mode off. Confirm unrelated later work does not create contracts.
-3. Compact context and check recovery of the explicit session ID, without selecting
-   another conversation's record.
+   mentioning jstack. Check active mode/budget continuity and evidence.
+2. Turn the mode off. Confirm unrelated later work stops applying the workflow.
+3. Compact context and check recovery of the active flag and budget. In recorded
+   mode, preserve the explicit ID without selecting another conversation's record.
 4. Ask for three agents under cheap budget. Confirm no silent escalation.
 5. Ask only for a review. Confirm no application edit or external publication.
 6. Provide a failing check or unavailable environment. Confirm it is not reported

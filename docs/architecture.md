@@ -1,9 +1,14 @@
 # Architecture and boundaries
 
-The canonical portable skill lives in `skills/jstack-mode/`. Its short entry
-selects one reference playbook. Setup copies the skill to each host's discovery
-location and substitutes a host-specific reference. Adapters translate discovery,
-invocation and tool expectations; they do not duplicate the workflow engine.
+The canonical self-contained skill lives in `skills/jstack-mode/`. The default
+path is to extract the release ZIP into a host's skill directory. Its entry reads
+one playbook and uses native host tools. Activation, budget and acceptance live
+in conversation context; no runtime, config or ID is required. Evidence is reported
+in the conversation, with no claim of automatic receipt or freshness tracking.
+
+An existing project config may supply preferences. The optional runner is used
+only on an explicit request for recorded operation. Setup copies the skill and
+substitutes host guidance; its reminder blocks preserve the skill-only default.
 
 The Python runtime has no external dependencies:
 
@@ -15,7 +20,7 @@ The Python runtime has no external dependencies:
 - `storage.py` contains path validation, atomic record writes and the writer lock.
 - `cli.py` provides explicit commands and exit codes.
 
-## Contract lifecycle
+## Optional recorded contract lifecycle
 
 1. Setup creates config with no assumed project check command.
 2. Mode activation creates an isolated session and selects an effort preset.

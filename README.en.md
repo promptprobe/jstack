@@ -6,17 +6,19 @@
 
 [![Validation](https://github.com/promptprobe/jstack/actions/workflows/validate.yml/badge.svg)](https://github.com/promptprobe/jstack/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Download skill](https://img.shields.io/badge/skill-download-green.svg)](https://github.com/promptprobe/jstack/releases/download/v0.2.0/jstack-mode.zip)
 
-jstack is a small workflow toolkit for **Codex and Claude Code**. Turn it on once
-in a conversation, describe the outcome you want, and choose how much effort to
-spend. The agent follows a focused playbook; a local helper records the acceptance
-contract, runs explicit checks, and shows what the evidence actually supports.
+jstack is a portable coding skill for **Codex and Claude Code**. Download one
+folder, place it in your host's skills directory, and invoke it. Choose an effort
+level, follow a focused playbook, verify the result, and report the evidence.
 
-One entry skill. Eight playbooks. The local helper has no Python dependencies,
-model API calls, telemetry, or background service. Running the agent still uses
-your host's model allowance. Version **0.1.0** is an early release: the local tooling is
-tested, while agent adherence still depends on the host and model.
+**No Python, Git clone, setup command or config file is needed for the skill.**
+Your project's tests still need their own runtime and dependencies. One entry
+skill and eight playbooks are included. Host model usage still applies.
+
+Version **0.2.0** defaults to skill-only operation. A separate Python runner is
+optional for persisted receipts, retry enforcement and source freshness checks.
+See [validation](docs/validation.md) for observed behavior and its limits.
 
 ```text
 You:   $jstack-mode cheap — fix the duplicate cart item after reconnect.
@@ -29,76 +31,50 @@ Agent: Stop applying the mode in this conversation.
 
 In Claude Code, use `/jstack-mode` instead of `$jstack-mode`.
 
-## Install in a project
+## Download and use
 
-You need **Python 3.10+**, **Git**, and a host that supports project skills. Run
-setup at the target Git repository root. No package manager or global CLI install
-is needed. This avoids replacing the JVM's unrelated `jstack` command.
+1. **[Download jstack-mode.zip](https://github.com/promptprobe/jstack/releases/download/v0.2.0/jstack-mode.zip)** and extract it.
+2. Copy the whole **`jstack-mode` folder**, including references, to one location below.
+3. Invoke the skill. Refresh/restart your host if discovery does not update.
 
-```sh
-git clone https://github.com/promptprobe/jstack.git "$HOME/.local/share/jstack"
-cd /path/to/your/project
-
-# Preview the paths that setup will manage.
-python3 "$HOME/.local/share/jstack/jstack.py" setup --host both --dry-run
-
-# Install both adapters, or choose just codex or claude.
-python3 "$HOME/.local/share/jstack/jstack.py" setup --host both
-```
-
-| Target | Setup flag | Installed skill | Invoke |
+| Host | Personal, all projects | Project only | Invoke |
 | --- | --- | --- | --- |
-| Codex CLI / IDE | `--host codex` | `.agents/skills/jstack-mode/` | `$jstack-mode` |
-| Claude Code | `--host claude` | `.claude/skills/jstack-mode/` | `/jstack-mode` |
-| Both | `--host both` | Both locations | Either host |
+| Codex | `~/.agents/skills/jstack-mode/` | `.agents/skills/jstack-mode/` | `$jstack-mode cheap` |
+| Claude Code | `~/.claude/skills/jstack-mode/` | `.claude/skills/jstack-mode/` | `/jstack-mode cheap` |
 
-Setup copies a self-contained runtime into `.jstack/`, creates a project config,
-and adds small marked sections to `AGENTS.md`, `CLAUDE.md`, and `.gitignore` as
-appropriate. It preserves existing content and refuses to replace locally edited
-managed files. Installing does **not** activate the mode or change global settings.
-Restart or refresh your host if the new skill does not appear.
+Choose personal or project scope. Create missing directories; the final path must
+end in `skills/jstack-mode/SKILL.md`. For both hosts copy the same folder to both
+locations. Back up any edited existing skill before replacing it. Do not copy only
+SKILL.md: its referenced playbooks are part of the skill.
 
-Commit the installed skill, runtime, config, manifest and instruction files to
-share the setup with your team. Keep `.jstack/local/` ignored: it can contain task
-text and captured command output. See [setup details](docs/installation.md).
-
-### Configure a real check
-
-The default check list is empty. jstack cannot infer a trustworthy project test
-command and will not mark empty verification as passed. For a Python project,
-edit `.jstack/config.json` to include:
-
-```json
-{
-  "version": 1,
-  "budget": "normal",
-  "agents": { "enabled": false, "max_children": 1 },
-  "verification": {
-    "timeout_seconds": 120,
-    "checks": [
-      {
-        "name": "tests",
-        "argv": ["{python}", "-m", "unittest", "discover", "-s", "tests"],
-        "required": true
-      }
-    ]
-  }
-}
+```text
+$jstack-mode normal
+Reproduce and fix the login bug, then verify it with the project's real checks.
 ```
 
-Use your project's actual command; [examples](examples) cover Python and Node.
-Commands are argv arrays, run from the project root without shell interpolation.
-`{python}` resolves to the interpreter running jstack. On Windows, invoke script
-entry points through their interpreter rather than relying on `.cmd` shell wrappers.
-These are executable project commands: inspect the config before running checks
-from an unfamiliar repository.
+Use `/jstack-mode` in Claude Code. **That's all the setup required.** No `doctor`,
+`.jstack/`, generated config, instruction-file changes or session IDs are needed.
+The agent discovers real checks from your project. Missing or unavailable tests
+are reported as gaps, not passes. Invoke once per conversation, again in a new one.
 
-```sh
-python3 .jstack/jstack.py doctor
-```
+Paths follow [OpenAI](https://learn.chatgpt.com/docs/build-skills) and
+[Claude Code](https://code.claude.com/docs/en/skills) documentation.
+[Skill source](skills/jstack-mode) · [SHA-256 checksum](https://github.com/promptprobe/jstack/releases/download/v0.2.0/SHA256SUMS) · [Installation details](docs/installation.md)
 
-`doctor` checks installation integrity and configuration. It does not call an AI
-model or prove that a host loaded the skill. [Configuration reference →](docs/configuration.md)
+### Optional recorded operation
+
+| Capability | Skill-only, default | Optional runner |
+| --- | --- | --- |
+| Routing, budget, sticky conversation | Agent instructions | Supported |
+| Project checks and evidence | Native host tools, conversation report | Persisted command receipts |
+| Config and session IDs | Not required | Required |
+| Retry limits and stale results | Agent adherence | Per-task gates and Git fingerprints |
+| Additional requirements | None for jstack itself | Python 3.10+ and Git |
+
+An existing `.jstack/config.json` may supply preferences and check commands; it is
+not a prerequisite. Follow [optional runner setup](docs/installation.md#optional-recorded-operation)
+only if you want recorded checks. Installing the runner does not select it:
+request **“Use jstack recorded mode”** explicitly. See [configuration](docs/configuration.md).
 
 ## Pick the effort, keep the evidence
 
@@ -110,9 +86,9 @@ model or prove that a host loaded the skill. [Configuration reference →](docs/
 
 ¹ Guidance for the agent, not a technical limit on host tools.
 
-² The runner allows the initial final check plus this many retries per task.
+² Guidance in skill-only mode; the optional runner enforces the initial final check plus these retries per task.
 
-³ Effective ceiling also depends on project config. Fanout is **disabled by default**.
+³ Use any lower configured ceiling. Fanout is **disabled by default** and needs explicit user/config enablement and host permission.
 
 These are limits, not work to fill. `cheap` reduces exploration and coordination;
 it does not skip required checks. `deep` permits more investigation without forcing
@@ -159,19 +135,17 @@ Report coverage gaps and check the actual saved artifact.
 
 ### Sticky means this conversation
 
-The helper returns a session ID; the agent carries that ID and budget into later
-turns. Sessions are separate local records, so one conversation cannot silently
-turn another one on. Say `jstack off` to opt out, or `jstack budget cheap` to change
-the session's effort. A per-task CLI budget override does not change session defaults.
+Skill-only mode carries the active flag and budget in conversation context, with
+no session files. Say `jstack off` to stop or `jstack budget cheap` to change effort.
+Reinvoke in a new conversation. There is no global activation or background hook.
+The host must retain this state through compaction; if lost, reinvoke the skill.
+Sticky behavior is an instruction contract, not guaranteed persistence. Optional
+recorded mode additionally retains an explicit session ID; the file alone cannot
+make the host remember it.
 
-There is no hidden global active session or always-running hook. The host must
-follow the skill and carry the ID through compaction. If that context is lost,
-reinvoke the skill or provide your session ID. Sticky behavior is an instruction
-contract, not guaranteed host persistence.
+## Optional local helper, without an agent
 
-## The local helper, without an agent
-
-Every deterministic part can be used directly:
+After installing and configuring the optional runner, use it directly:
 
 ```sh
 python3 .jstack/jstack.py mode on --host codex --budget cheap
@@ -204,15 +178,12 @@ mutable files, not signed attestations. [CLI and evidence reference →](docs/cl
 
 ```mermaid
 flowchart LR
-  A[Codex skill] --> C[One workflow contract]
-  B[Claude Code skill] --> C
-  C --> D[Selected playbook]
-  C --> E[Project config and budget]
-  D --> F[Host edits and inspects]
-  E --> G[Local Python helper]
-  F --> G
-  G --> H[Source-bound check receipts]
-  H --> I[Evidence report]
+  A[Skill ZIP] --> B[Codex or Claude Code]
+  B --> C[Selected playbook]
+  C --> D[Host edits and verifies]
+  D --> E[Evidence in conversation]
+  D -. opt-in recorded mode .-> F[Python runner]
+  F --> G[Receipts and source freshness]
 ```
 
 ```text
@@ -221,7 +192,7 @@ adapters/                Codex and Claude Code host guidance
 jstack_core/             Config, setup, routing, session state, checks, reports
 jstack.py                Checkout and installed entry point
 tests/                   Filesystem, workflow, evidence and CLI regressions
-scripts/                 Validation and isolated end-to-end smoke test
+scripts/                 Skill ZIP builder, validation and smoke test
 docs/                    Install, architecture, cost policy and reference
 ```
 
@@ -236,7 +207,7 @@ python3 scripts/validate.py
 ```
 
 Validation runs unit/integration tests, the installed CLI smoke flow, Python syntax
-checks, skill structure checks, and local documentation-link checks. CI covers
+checks, self-contained skill archive and host-layout checks, and local documentation-link checks. CI covers
 Linux, macOS and Windows across selected Python versions. A passing CI badge is
 evidence for tooling tests, not live Codex/Claude behavior or token savings.
 
@@ -256,7 +227,7 @@ For security-sensitive reports, see [SECURITY.md](SECURITY.md).
   inputs explicitly; add adapters for CI and browser artifacts. Today those require
   separate observations, and submodules yield unknown freshness.
 - **Distribution:** add signed release checksums and host-native plugin packaging
-  after the project-local flow stabilizes. No npm or PyPI package is published.
+  alongside the portable skill ZIP and unsigned SHA-256 checksum already available. No npm or PyPI package is published.
 - **Routing:** evaluate ambiguous and multilingual requests against a public fixture
   set. Keep explicit overrides and avoid adding a model call merely to select a playbook.
 
